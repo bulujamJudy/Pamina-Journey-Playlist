@@ -1,0 +1,9 @@
+node_modules/
+dist/
+extension/dist/
+.DS_Store
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+.vercel/

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="An illustrated train journey with live audio visualization and YouTube Music playback." />
+    <title>Pamina Journey Playlist</title>
+  </head>
+  <body>
+<img class="scene-layer scene-layer-5" data-parallax-depth="0.12" src="./layers/layer-5.webp" alt="" />
+<img class="scene-layer scene-layer-4-top" data-parallax-depth="0.45" src="./layers/layer-4-top.webp" alt="" />
+<img id="scene-layer-4-birds" class="scene-layer scene-layer-4-birds" data-parallax-depth="0.68" src="./layers/layer-4-birds.webp" alt="" />
+<div class="scene-layer scene-layer-3 scene-layer-loop" data-parallax-depth="0.55" aria-hidden="true">
+  <img class="scene-loop-copy" src="./layers/layer-3.webp" alt="" />
+  <img class="scene-loop-copy" src="./layers/layer-3.webp" alt="" />
+  <img class="scene-loop-copy" src="./layers/layer-3.webp" alt="" />
+</div>
+<div class="scene-layer scene-layer-2 scene-layer-loop" data-parallax-depth="1" aria-hidden="true">
+  <img class="scene-loop-copy" src="./layers/layer-2.webp" alt="" />
+  <img class="scene-loop-copy" src="./layers/layer-2.webp" alt="" />
+</div>
+<img class="scene-layer scene-layer-1" data-parallax-depth="1.25" src="./layers/layer-1.webp" alt="" />
+    <canvas id="waveform" class="waveform-canvas" aria-label="Mirrored audio waveform"></canvas>
+<div class="scene-color-overlay" id="scene-color-overlay" aria-hidden="true"></div>
+<img class="scene-layer scene-layer-0" data-parallax-depth="1.5" src="./layers/layer-0.webp" alt="" />
+<div class="scene-color-overlay-front" id="scene-color-overlay-front" aria-hidden="true"></div>
+<img class="scene-layer scene-layer-4-stars" data-parallax-depth="3.4" src="./layers/layer-4-stars.webp" alt="" />
+    <main class="dashboard" id="dashboard">
+      <header class="topbar">
+        <div class="wordmark" aria-label="Pamina - In my Journey"><span>Pamina - In my Journey</span></div>
+        <div class="connection" id="connection"><span class="connection-dot"></span><span id="connection-label">DEMO MODE</span></div>
+        <div class="top-actions"><button class="capture-button" id="computer-audio-toggle" type="button">CAPTURE COMPUTER AUDIO</button><button class="icon-button settings-trigger" id="settings-trigger" aria-label="Open settings" aria-expanded="false" aria-controls="settings-panel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.2a3.8 3.8 0 1 0 0 7.6 3.8 3.8 0 0 0 0-7.6Zm9 4.9v-2.2l-2.1-.6a7 7 0 0 0-.7-1.6l1.1-1.9-1.6-1.6-1.9 1.1a7 7 0 0 0-1.6-.7L13.6 3h-2.2l-.6 2.1a7 7 0 0 0-1.6.7L7.3 4.7 5.7 6.3l1.1 1.9a7 7 0 0 0-.7 1.6L4 10.4v2.2l2.1.6a7 7 0 0 0 .7 1.6l-1.1 1.9 1.6 1.6 1.9-1.1a7 7 0 0 0 1.6.7l.6 2.1h2.2l.6-2.1a7 7 0 0 0 1.6-.7l1.9 1.1 1.6-1.6-1.1-1.9a7 7 0 0 0 .7-1.6l2.1-.6Z"/></svg></button></div>
+      </header>
+
+      <section class="visual-stage" aria-label="Audio visualizer">
+      </section>
+
+      <section class="player" aria-label="Current track">
+        <div class="cover-column"><div class="album-display" id="album-display"><div class="vinyl-record"><img id="album-cover" alt="Circular album cover on vinyl" /></div><span class="album-color-bar" aria-hidden="true"></span><img class="album-sleeve" id="album-sleeve" alt="Square album cover" /></div></div>
+        <div class="track-details">
+          <div class="track-heading"><div><p class="track-kicker">NOW PLAYING</p><h1 id="song-title">In my Journey</h1><p id="song-artist">Tycho</p></div><span class="stage-index" aria-label="Scene 01 of 01">01 <i></i> 01</span></div>
+          <div class="timeline" id="timeline-wrap"><div class="time-row"><span id="current-time">0:00</span><span id="duration">0:00</span></div><div class="progress-track"><div id="progress-fill"></div><span id="progress-knob"></span></div></div>
+        </div>
+      </section>
+    </main>
+    <aside class="settings-panel" id="settings-panel" aria-hidden="true">
+      <div class="settings-head"><div><span class="eyebrow">PREFERENCES</span><h2>Settings</h2></div><button class="icon-button close-settings" id="close-settings" aria-label="Close settings">×</button></div>
+      <section class="setting-section"><h3>VISUALIZER</h3>
+        <label class="setting-row"><span><b>Show waveform</b><small>Keep the visualizer in view</small></span><input id="setting-waveform" type="checkbox" /></label>
+        <label class="setting-row"><span><b>Visualization mode</b><small>Real mode requires extension capture</small></span><select id="setting-mode"><option value="simulated">Simulated</option><option value="real">Real audio</option></select></label>
+        <label class="setting-row vertical"><span><b>Sensitivity</b><small>Waveform response</small></span><input id="setting-sensitivity" type="range" min="0.5" max="2" step="0.1" /></label>
+        <label class="setting-row vertical"><span><b>Number of bars</b><small>Waveform detail</small></span><input id="setting-bars" type="range" min="32" max="112" step="4" /></label>
+        <label class="setting-row vertical"><span><b>Bar width</b><small>Width of each waveform line</small></span><input id="setting-bar-width" type="range" min="2" max="10" step="1" /></label>
+        <label class="setting-row vertical"><span><b>Bar spacing</b><small>Space between lines</small></span><input id="setting-bar-spacing" type="range" min="1" max="14" step="1" /></label>
+        <label class="setting-row vertical"><span><b>Animation smoothing</b><small>Lower is more responsive</small></span><input id="setting-smoothing" type="range" min="0.5" max="0.98" step="0.02" /></label>
+        <label class="setting-row vertical"><span><b>Maximum height</b><small>Waveform amplitude</small></span><input id="setting-max-height" type="range" min="0.1" max="0.48" step="0.01" /></label>
+        <label class="setting-row"><span><b>Waveform color</b><small>Default white</small></span><input id="setting-color" type="color" /></label>
+      </section>
+      <section class="setting-section"><h3>APPEARANCE</h3>
+        <label class="setting-row"><span><b>Background color</b><small>Default pure black</small></span><input id="setting-background" type="color" /></label>
+        <label class="setting-row"><span><b>Text color</b></span><input id="setting-text" type="color" /></label>
+      </section>
+      <section class="setting-section"><h3>DISPLAY</h3>
+        <label class="setting-row"><span><b>Album artwork</b></span><input id="setting-artwork" type="checkbox" /></label>
+        <label class="setting-row"><span><b>Progress bar</b></span><input id="setting-progress" type="checkbox" /></label>
+        <label class="setting-row"><span><b>Color overlay behind 0.png</b></span><input id="setting-color-overlay" type="checkbox" /></label>
+        <label class="setting-row"><span><b>Overlay color</b></span><select id="setting-overlay-source"><option value="custom">Choose a color</option><option value="album">Album cover color</option></select></label>
+        <label class="setting-row" id="overlay-custom-color-row"><span><b>Custom color</b></span><input id="setting-overlay-color" type="color" /></label>
+        <label class="setting-row vertical"><span class="range-heading"><b>Overlay opacity</b><output id="setting-overlay-opacity-value">60%</output></span><input id="setting-overlay-opacity" type="range" min="0" max="100" step="1" /></label>
+      </section>
+      <section class="setting-section"><h3>CONNECTION</h3><p class="setting-help" id="connection-detail">Demo playback is active. Install the extension to connect YouTube Music.</p><button class="text-button" id="reconnect">Refresh connection ↗</button><button class="text-button" id="capture-audio">Capture computer audio ↗</button></section>
+      <button class="reset-button" id="reset-settings">Restore default settings</button>
+    </aside>
+    <div class="panel-scrim" id="panel-scrim"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

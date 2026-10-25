@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Still — YouTube Music Bridge",
+  "version": "1.0.0",
+  "description": "Connect YouTube Music playback to the Still dashboard visualizer.",
+  "permissions": ["tabs", "storage", "tabCapture", "offscreen"],
+  "host_permissions": ["https://music.youtube.com/*", "https://bulujamjudy.github.io/*", "http://localhost:5173/*", "http://127.0.0.1:5173/*"],
+  "background": { "service_worker": "background.js", "type": "module" },
+  "action": { "default_title": "Capture the active YouTube Music tab" },
+  "content_scripts": [
+    { "matches": ["https://music.youtube.com/*"], "js": ["musicContent.js"], "run_at": "document_idle" },
+    { "matches": ["https://bulujamjudy.github.io/*", "http://localhost:5173/*", "http://127.0.0.1:5173/*"], "js": ["dashboardBridge.js"], "run_at": "document_start" }
+  ]
+}
