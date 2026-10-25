@@ -12,6 +12,7 @@ type MotionLayer = {
 type TrailPoint = { x: number; y: number; time: number };
 type SparkRay = { angle: number; length: number };
 type ClickSpark = { x: number; y: number; time: number; rays: SparkRay[] };
+type FloatingParticle = { x: number; y: number; size: number; speed: number; opacity: number; phase: number };
 
 const birdTravelMs = 20_000;
 const trainBump = (age: number): number => age >= 0 && age < 2_400
@@ -57,6 +58,19 @@ export function initializeSceneMotion(): void {
   let cursorActive = false;
   const trail: TrailPoint[] = [];
   const sparks: ClickSpark[] = [];
+  const particles: FloatingParticle[] = [];
+  let particleBoost = 0;
+  const populateParticles = () => {
+    const count = Math.max(24, Math.min(64, Math.round(window.innerWidth * window.innerHeight / 32_000)));
+    particles.splice(count);
+    while (particles.length < count) {
+      particles.push({
+        x: Math.random(), y: Math.random(), size: 1.5 + Math.random() * 2,
+        speed: 7 + Math.random() * 10, opacity: 65 + Math.random() * 100,
+        phase: Math.random() * Math.PI * 2,
+      });
+    }
+  };
   let clickBumpStartedAt = -Infinity;
   const onPointerMove = (event: PointerEvent) => {
     if (!finePointer.matches || event.pointerType === 'touch') return;
@@ -74,6 +88,7 @@ export function initializeSceneMotion(): void {
   const onPointerDown = (event: PointerEvent) => {
     if (event.button !== 0) return;
     clickBumpStartedAt = performance.now();
+    particleBoost = 1.2;
     if (!finePointer.matches || event.pointerType === 'touch') return;
     sparks.push({
       x: event.clientX,
@@ -104,14 +119,31 @@ export function initializeSceneMotion(): void {
       canvas.elt.classList.add('scene-motion-canvas');
       canvas.elt.setAttribute('aria-hidden', 'true');
       p.pixelDensity(1);
+      populateParticles();
     };
 
-    p.windowResized = () => p.resizeCanvas(window.innerWidth, window.innerHeight);
+    p.windowResized = () => {
+      p.resizeCanvas(window.innerWidth, window.innerHeight);
+      populateParticles();
+    };
 
     p.draw = () => {
       const dt = Math.min(p.deltaTime || 16, 64);
       elapsedMs += dt;
       p.clear();
+      particleBoost *= Math.exp(-dt / 900);
+      p.noStroke();
+      for (const particle of particles) {
+        particle.y -= particle.speed * (1 + particleBoost) * dt / 1_000 / p.height;
+        particle.x = (particle.x + Math.sin(elapsedMs / 2_800 + particle.phase) * 3 * dt / 1_000 / p.width + 1) % 1;
+        if (particle.y < 0) {
+          particle.y = 1;
+          particle.x = Math.random();
+        }
+        const edgeFade = Math.max(0, Math.min(1, particle.y / 0.08, (1 - particle.y) / 0.08));
+        p.fill(255, particle.opacity * edgeFade);
+        p.circle(particle.x * p.width, particle.y * p.height, particle.size);
+      }
       const cursorBlend = 1 - Math.exp(-dt / 32);
       cursorX = p.lerp(cursorX, cursorTargetX, cursorBlend);
       cursorY = p.lerp(cursorY, cursorTargetY, cursorBlend);
