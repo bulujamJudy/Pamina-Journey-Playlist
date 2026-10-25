@@ -14,6 +14,9 @@ type SparkRay = { angle: number; length: number };
 type ClickSpark = { x: number; y: number; time: number; rays: SparkRay[] };
 
 const birdTravelMs = 20_000;
+const trainBump = (age: number): number => age >= 0 && age < 2_400
+  ? Math.cos(age * Math.PI * 2 / 220) * 8 * Math.exp(-age / 320)
+  : 0;
 const starLayer = () => document.querySelector<HTMLElement>('.scene-layer-4-stars');
 
 export function setSceneAudioLevel(level: number | null): void {
@@ -54,6 +57,7 @@ export function initializeSceneMotion(): void {
   let cursorActive = false;
   const trail: TrailPoint[] = [];
   const sparks: ClickSpark[] = [];
+  let clickBumpStartedAt = -Infinity;
   const onPointerMove = (event: PointerEvent) => {
     if (!finePointer.matches || event.pointerType === 'touch') return;
     if (!cursorActive) {
@@ -68,7 +72,9 @@ export function initializeSceneMotion(): void {
     targetY = Math.max(-1, Math.min(1, (event.clientY / window.innerHeight - 0.5) * 2));
   };
   const onPointerDown = (event: PointerEvent) => {
-    if (!finePointer.matches || event.pointerType === 'touch' || event.button !== 0) return;
+    if (event.button !== 0) return;
+    clickBumpStartedAt = performance.now();
+    if (!finePointer.matches || event.pointerType === 'touch') return;
     sparks.push({
       x: event.clientX,
       y: event.clientY,
@@ -175,12 +181,10 @@ export function initializeSceneMotion(): void {
         const loopOffset = layer.loopSpeed && loopWidth > 0
           ? (elapsedMs * layer.loopSpeed / 1_000) % loopWidth
           : 0;
-        const bumpElapsed = elapsedMs - 8_000;
         const trainShakeY = layer.isTrain
           ? Math.sin(elapsedMs * Math.PI * 2 / 1_900) * 2.4
-            + (bumpElapsed >= 0
-              ? Math.cos(bumpElapsed * Math.PI * 2 / 220) * 8 * Math.exp(-bumpElapsed / 320)
-              : 0)
+            + trainBump(elapsedMs - 8_000)
+            + trainBump(performance.now() - clickBumpStartedAt)
           : 0;
 
         layer.element.style.setProperty('--parallax-x', `${parallaxX.toFixed(2)}px`);
