@@ -209,7 +209,13 @@ export function initializeSceneMotion(): void {
       for (const layer of layers) {
         const parallaxX = -currentX * horizontalRange * layer.depth;
         const parallaxY = -currentY * verticalRange * layer.depth;
-        const loopWidth = layer.element.clientWidth;
+        const isCloudLayer = layer.element.classList.contains('scene-layer-3');
+        const viewportWidth = layer.element.clientWidth;
+        const viewportHeight = layer.element.clientHeight;
+        // Match 0.png's cover scale, retaining the full source width for seamless tiling.
+        const artworkRatio = 2560 / 1707;
+        const loopWidth = isCloudLayer ? Math.max(viewportWidth, viewportHeight * artworkRatio) : viewportWidth;
+        const artworkHeight = loopWidth / artworkRatio;
         const loopOffset = layer.loopSpeed && loopWidth > 0
           ? (elapsedMs * layer.loopSpeed / 1_000) % loopWidth
           : 0;
@@ -224,7 +230,13 @@ export function initializeSceneMotion(): void {
         layer.element.style.setProperty('--train-shake-y', `${trainShakeY.toFixed(2)}px`);
         layer.element.style.setProperty('--scene-drift-x', '0px');
         layer.loopCopies.forEach((copy, index) => {
-          copy.style.left = `${(index - 1) * loopWidth + loopOffset}px`;
+          const originX = isCloudLayer ? (viewportWidth - loopWidth) / 2 : 0;
+          copy.style.left = `${originX + (index - 1) * loopWidth + loopOffset}px`;
+          if (isCloudLayer) {
+            copy.style.width = `${loopWidth}px`;
+            copy.style.height = `${artworkHeight}px`;
+            copy.style.top = `${(viewportHeight - artworkHeight) * (window.innerWidth <= 520 ? 0.57 : 0.58)}px`;
+          }
         });
         if (layer.isBirds) layer.element.style.setProperty('--bird-x', `${birdX.toFixed(2)}px`);
       }

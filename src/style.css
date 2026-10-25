@@ -13,11 +13,13 @@ html,body{width:100%;height:100%;min-height:0;overflow:hidden;overscroll-behavio
 .scene-layer-4-stars{z-index:70;object-position:center 58%;animation:none}
 .scene-layer-4-stars{filter:brightness(1) saturate(1);transition:filter 180ms ease-out}
 /* Overscan full-viewport artwork so parallax never exposes the page background. */
-.scene-layer-5,.scene-layer-4-stars,.scene-layer-0{scale:1.06;transform-origin:center center}
+.scene-layer-5,.scene-layer-4-stars,.scene-layer-3,.scene-layer-0{scale:1.06;transform-origin:center center}
 /* Keep every artwork layer anchored to the viewport; only 4-2 moves. */
 .scene-layer:not(.scene-layer-4-birds):not(.scene-layer-1):not(.scene-layer-2):not(.scene-layer-3){animation:none;transform:none}
-.scene-layer-1{width:max(100vw,150dvh);height:auto;top:auto;bottom:0;left:50%;transform:translateX(-50%);animation:none}.scene-layer-2{width:max(100vw,150dvh);height:auto;aspect-ratio:2560/1124;top:auto;bottom:0;left:0;animation:none}.scene-layer-loop{overflow:visible;will-change:translate}.scene-loop-copy{position:absolute;top:0;left:0;width:100%;height:100%;max-width:none;object-fit:cover;user-select:none;pointer-events:none}.scene-layer-3{inset:auto auto 0 0;width:min(100vw,150dvh);height:auto;aspect-ratio:2560/1707;scale:1;transform-origin:center bottom}
+.scene-layer-1{width:max(100vw,150dvh);height:auto;top:auto;bottom:0;left:50%;transform:translateX(-50%);animation:none}.scene-layer-2{width:max(100vw,150dvh);height:auto;aspect-ratio:2560/1124;top:auto;bottom:0;left:0;animation:none}.scene-layer-loop{overflow:visible;will-change:translate}.scene-loop-copy{position:absolute;top:0;left:0;width:100%;height:100%;max-width:none;object-fit:cover;user-select:none;pointer-events:none}.scene-layer-3{inset:0;width:100%;height:100%}
 .scene-layer-3{animation:none}
+.scene-layer-3 .scene-loop-copy{object-position:center 58%}
+@media(max-width:520px){.scene-layer-3 .scene-loop-copy{object-position:center 57%}}
 @media(prefers-reduced-motion:reduce){.scene-layer-4-birds{transform:none!important}}
 @media(hover:hover) and (pointer:fine){.scene-layer[data-parallax-depth]{will-change:translate}}
 .scene-layer{translate:calc(var(--parallax-x,0px) + var(--scene-drift-x,0px)) calc(var(--parallax-y,0px) + var(--train-shake-y,0px))}
