@@ -132,6 +132,28 @@ bridge.subscribe(updatePlayback);
 setInterval(() => { if (Date.now() - lastAudioAt > 1500) renderer.setAudioLevels(null); render(); }, 250); render(); setSettingsClass();
 
 const panel = $('settings-panel'); const trigger = $('settings-trigger'); const scrim = $('panel-scrim');
+const fullscreenButton = $('fullscreen-toggle') as HTMLButtonElement;
+function syncFullscreenButton(): void {
+  const active = Boolean(document.fullscreenElement);
+  const label = active ? 'Exit fullscreen' : 'Enter fullscreen';
+  fullscreenButton.hidden = !document.fullscreenEnabled;
+  fullscreenButton.setAttribute('aria-label', label);
+  fullscreenButton.setAttribute('aria-pressed', String(active));
+  fullscreenButton.title = label;
+  document.getElementById('fullscreen-icon')?.setAttribute('d', active
+    ? 'M3 8h5V3M21 8h-5V3M16 21v-5h5M8 21v-5H3'
+    : 'M8 3H3v5M16 3h5v5M21 16v5h-5M3 16v5h5');
+}
+fullscreenButton.addEventListener('click', async () => {
+  try {
+    if (document.fullscreenElement) await document.exitFullscreen();
+    else await document.documentElement.requestFullscreen();
+  } catch {
+    fullscreenButton.title = 'Fullscreen is unavailable. Please try opening this site in a browser tab.';
+  }
+});
+document.addEventListener('fullscreenchange', syncFullscreenButton);
+syncFullscreenButton();
 function setPanel(open: boolean): void { panel.classList.toggle('open', open); scrim.classList.toggle('visible', open); panel.setAttribute('aria-hidden', String(!open)); trigger.setAttribute('aria-expanded', String(open)); }
 trigger.addEventListener('click', () => setPanel(true)); $('close-settings').addEventListener('click', () => setPanel(false)); scrim.addEventListener('click', () => setPanel(false)); document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setPanel(false); });
 const controls: Record<string, keyof Settings> = { 'setting-waveform':'enabled', 'setting-mode':'mode', 'setting-sensitivity':'sensitivity', 'setting-bars':'bars', 'setting-bar-width':'barWidth', 'setting-bar-spacing':'barSpacing', 'setting-smoothing':'smoothing', 'setting-max-height':'maxHeight', 'setting-color':'waveformColor', 'setting-background':'backgroundColor', 'setting-text':'textColor', 'setting-artwork':'showArtwork', 'setting-progress':'showProgress', 'setting-color-overlay':'colorOverlayEnabled', 'setting-overlay-source':'colorOverlaySource', 'setting-overlay-color':'colorOverlayColor', 'setting-overlay-opacity':'colorOverlayOpacity' };
